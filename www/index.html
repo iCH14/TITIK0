@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TITIK0</title>
+  <!-- Tailwind CSS CDN -->
+  <link rel="stylesheet" href="tailwind.css">
+  <!-- FontAwesome Icons -->
+  <!-- Google Fonts - Plus Jakarta Sans & Playfair Display -->
+  <link rel="stylesheet" href="fonts/fonts.css">
+
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --card-dark: #131318;
+      --card-border: rgba(212, 175, 55, 0.25);
+      --gold-primary: #d4af37;
+      --gold-gradient: linear-gradient(135deg, #fceabb 0%, #d4af37 50%, #8c6c19 100%);
+    }
+
+
+    /* Ikon fallback (FontAwesome tidak dapat dimuat) */
+    .fa-solid,.fa-regular,.fa-brands,[class*=" fa-"]{font-style:normal;display:inline-block}
+    .fa-trash::before{content:"🗑"}
+    .fa-xmark::before{content:"✕"}
+    .fa-print::before{content:"🖨"}
+    .fa-mug-hot::before{content:"☕"}
+    .fa-utensils::before{content:"🍴"}
+    .fa-users-gear::before{content:"👥"}
+    .fa-user-plus::before{content:"➕"}
+    .fa-upload::before{content:"⬆"}
+    .fa-trash-can::before{content:"🗑"}
+    .fa-right-to-bracket::before{content:"➡"}
+    .fa-right-from-bracket::before{content:"⬅"}
+    .fa-receipt::before{content:"🧾"}
+    .fa-plus-circle::before{content:"➕"}
+    .fa-mug-saucer::before{content:"☕"}
+    .fa-magnifying-glass::before{content:"🔍"}
+    .fa-lock::before{content:"🔒"}
+    .fa-file-csv::before{content:"📄"}
+    .fa-download::before{content:"⬇"}
+    .fa-crown::before{content:"👑"}
+    .fa-clock-rotate-left::before{content:"🕘"}
+    .fa-circle-info::before{content:"ℹ"}
+    .fa-check-circle::before{content:"✔"}
+    .fa-cart-shopping::before{content:"🛒"}
+    .fa-calendar-day::before{content:"📅"}
+    .fa-glass-water::before{content:"🥤"}
+    .fa-chart-line::before{content:"📈"}
+    .fa-boxes-stacked::before{content:"📦"}
+    .fa-book-open::before{content:"📖"}
+
+    body {
+      background-color: var(--bg-dark);
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-serif-gold {
+      font-family: 'Playfair Display', serif;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gold-border {
+      border: 1px solid var(--card-border);
+    }
+
+    .gold-border-glow:focus, .gold-border-glow:focus-within {
+      border-color: #d4af37 !important;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35) !important;
+      outline: none;
+    }
+
+    .bg-card-dark {
+      background: linear-gradient(145deg, #17171f 0%, #0f0f14 100%);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .btn-gold {
+      background: var(--gold-gradient);
+      color: #060608;
+      font-weight: 700;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25);
+    }
+    .btn-gold:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(212, 175, 55, 0.45);
+      filter: brightness(1.08);
+    }
+    .btn-gold:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-gold-outline {
+      background: transparent;
+      border: 1px solid #d4af37;
+      color: #d4af37;
+      transition: all 0.2s ease;
+    }
+    .btn-gold-outline:hover:not(:disabled) {
+      background: rgba(212, 175, 55, 0.12);
+      color: #fceabb;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #08080a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #382904;
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d4af37;
+    }
+
+    /* Cetak Struk Thermal (Standard 58mm / 80mm) */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-receipt, #printable-receipt * {
+        visibility: visible;
+      }
+      #printable-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 80mm;
+        margin: 0 auto;
+        padding: 8px;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 11px;
+        line-height: 1.3;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="selection:bg-gold-500 selection:text-black">
+
+  <!-- Kontainer Utama Aplikasi -->
+  <div id="app" class="min-h-screen flex flex-col max-w-7xl mx-auto px-3 sm:px-6 py-4"></div>
+
+  <!-- Notifikasi Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-xs font-semibold tracking-wide bg-obsidian-800 text-gold-200 border border-gold-500/50 shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 flex items-center gap-2.5">
+    <i class="fa-solid fa-circle-info text-gold-400"></i>
+    <span id="toast-text">Pesan Notifikasi</span>
+  </div>
+
+  <!-- Kontainer Modal Dialog -->
+  <div id="modal-container" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4"></div>
+
+  <script>
+    /* ==========================================================================
+       PENYIMPANAN DATA & HELPER UTAMA
+       ========================================================================== */
+    const STORAGE_KEY = 'TITIK0_DATA_V2';
+
+    const $ = selector => document.querySelector(selector);
+    const rp = amount => 'Rp ' + Math.round(amount || 0).toLocaleString('id-ID');
+    const uid = () => 'id-' + Math.random().toString(36).substring(2, 9);
+    const escapeHtml = str => String(str || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const padTwo = num => String(num).padStart(2, '0');
+
+    const getTodayDate = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${padTwo(d.getMonth() + 1)}-${padTwo(d.getDate())}`;
+    };
+
+    const formatFullDate = dateStr => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    };
+
+    const showToast = (message, duration = 3200) => {
+      const toastEl = $('#toast');
+      const textEl = $('#toast-text');
+      textEl.textContent = message;
+      toastEl.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      toastEl.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toastEl.classList.remove('opacity-100', 'translate-y-0');
+        toastEl.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }, duration);
+    };
+
+    // Data Awal Bawaan
+    function getSeedData() {
+      const stock = [
+        ['Biji Kopi Arabika', 'gram', 2500, 500],
+        ['Biji Kopi Robusta', 'gram', 2000, 400],
+        ['Susu Murni', 'ml', 6000, 1000],
+        ['Susu Evaporasi', 'ml', 2000, 300],
+        ['Sirup Gula Aren', 'ml', 1500, 300],
+        ['Sirup Vanilla', 'ml', 1000, 200],
+        ['Teh Premium Earl Grey', 'pcs', 120, 25],
+        ['Bubuk Matcha Premium', 'gram', 500, 100],
+        ['Roti Brioche', 'pcs', 50, 10],
+        ['Keju Mozzarella', 'gram', 1000, 200],
+        ['Daging Sapi Patty', 'pcs', 40, 10],
+        ['Gelas Kertas 12oz', 'pcs', 300, 50]
+      ].map(([name, unit, qty, min], i) => ({ id: 'stk-' + i, name, unit, qty, min }));
+
+      const menu = [
+        ['Espresso Single', 'kopi', 15000, [['stk-0', 18], ['stk-11', 1]]],
+        ['Kopi Susu TITIK0', 'kopi', 22000, [['stk-0', 15], ['stk-2', 120], ['stk-4', 20], ['stk-11', 1]]],
+        ['Caffe Latte Gold', 'kopi', 26000, [['stk-0', 18], ['stk-2', 180], ['stk-11', 1]]],
+        ['Vanilla Aren Latte', 'kopi', 28000, [['stk-0', 18], ['stk-2', 150], ['stk-4', 15], ['stk-5', 10], ['stk-11', 1]]],
+        ['Matcha Latte Artisan', 'minum', 28000, [['stk-7', 15], ['stk-2', 180], ['stk-11', 1]]],
+        ['Earl Grey Milk Tea', 'minum', 22000, [['stk-6', 1], ['stk-2', 100], ['stk-4', 15], ['stk-11', 1]]],
+        ['Roti Bakar Keju', 'makan', 25000, [['stk-8', 2], ['stk-9', 40]]],
+        ['Burger Sapi TITIK0', 'makan', 35000, [['stk-8', 2], ['stk-10', 1], ['stk-9', 20]]]
+      ].map(([name, cat, price, rec], i) => ({
+        id: 'mnu-' + i,
+        name,
+        cat,
+        price,
+        rec: rec.map(([s, q]) => ({ s, q }))
+      }));
+
+      return {
+        menu,
+        stock,
+        orders: [],
+        users: [],
+        store: {
+          name: 'TITIK0',
+          address: 'Jl. Boulevard Utama No. 01, Jakarta',
+          phone: '0812-3456-7890'
+        }
+      };
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          parsed.users = parsed.users || [];
+          parsed.store = parsed.store || { name: 'TITIK0', address: 'Jl. Boulevard Utama No. 01', phone: '0812-3456-7890' };
+          return parsed;
+        }
+      } catch (e) {
+        console.error('Gagal memuat penyimpanan lokal:', e);
+      }
+      return getSeedData();
+    }
+
+    // Memastikan Minimal Terdapat 1 Akun Admin Default di Database (Login Terunci)
+    async function ensureDefaultAdmin() {
+      if (!AppState.users || AppState.users.length === 0 || (AppState.users.length === 1 && AppState.users[0].user === 'admin')) {
+        const defaultHash = await hashPassword('yusufw', '11223344');
+        AppState.users = [{
+          id: 'usr-admin-default',
+          name: 'Administrator Utama',
+          user: 'yusufw',
+          hash: defaultHash,
+          role: 'admin'
+        }];
+        saveData();
+      }
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(AppState));
+      } catch (e) {
+        console.error('Gagal menyimpan data:', e);
+      }
+    }
+
+    // Fungsi Enkripsi Password SHA-256
+    async function hashPassword(username, password) {
+      const text = `titik0-salt:${username.toLowerCase()}:${password}`;
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        let hash = 5381;
+        for (let i = 0; i < text.length; i++) {
+          hash = (hash * 33) ^ text.charCodeAt(i);
+        }
+        return 'x-' + (hash >>> 0).toString(16);
+      }
+    }
+
+    // Status Aplikasi Global
+    let AppState = loadData();
+    let UIState = {
+      tab: 'order',
+      date: getTodayDate(),
+      month: getTodayDate().slice(0, 7),
+      cart: {},
+      custName: '',
+      custTable: '',
+      paymentMethod: 'Tunai',
+      cashPaid: '',
+      menuSearch: '',
+      menuCategory: 'semua',
+      currentUser: null
+    };
+
+    // Sesi Pengguna Terikat
+    try {
+      const savedUser = localStorage.getItem('titik0-sess');
+      if (savedUser) {
+        UIState.currentUser = AppState.users.find(u => u.id === savedUser) || null;
+      }
+    } catch (e) {}
+
+    function setSession(user) {
+      UIState.currentUser = user;
+      UIState.tab = 'order';
+      try {
+        if (user) {
+          localStorage.setItem('titik0-sess', user.id);
+        } else {
+          localStorage.removeItem('titik0-sess');
+        }
+      } catch (e) {}
+      renderApp();
+    }
+
+    function logout() {
+      setSession(null);
+      showToast('Anda telah keluar dari aplikasi');
+    }
+
+    /* ==========================================================================
+       MODUL AUTENTIKASI & LOG IN (TERUNCI)
+       ========================================================================== */
+    async function handleLogin() {
+      const userEl = $('#login-username');
+      const passEl = $('#login-password');
+      const errEl = $('#login-error');
+
+      const username = userEl.value.trim().toLowerCase();
+      const password = passEl.value;
+
+      if (!username || !password) {
+        errEl.textContent = 'Masukkan nama pengguna dan kata sandi';
+        return;
+      }
+
+      const hashed = await hashPassword(username, password);
+      const user = AppState.users.find(u => u.user === username && u.hash === hashed);
+
+      if (!user) {
+        errEl.textContent = 'Nama pengguna atau kata sandi tidak sesuai';
+        return;
+      }
+
+      errEl.textContent = '';
+      setSession(user);
+      showToast(`Selamat datang kembali, ${user.name}`);
+    }
+
+    function renderAuthScreen() {
+      $('#app').innerHTML = `
+        <div class="flex-1 flex items-center justify-center p-4 min-h-[85vh]">
+          <div class="w-full max-w-md bg-card-dark rounded-2xl p-8 shadow-2xl gold-border relative overflow-hidden">
+            <!-- Efek Glowing Emas -->
+            <div class="absolute -top-20 -right-20 w-44 h-44 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-44 h-44 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center mb-8">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gold-500/10 border border-gold-500/30 text-gold-400 mb-3 shadow-lg shadow-gold-500/10">
+                <i class="fa-solid fa-lock text-3xl"></i>
+              </div>
+              <h1 class="text-3xl font-extrabold font-serif-gold tracking-widest">TITIK0</h1>
+              <p class="text-[11px] tracking-widest text-gold-400/80 uppercase mt-1">Aplikasi Kasir Terunci</p>
+              <p class="text-xs text-zinc-400 mt-3">
+                Silakan masuk menggunakan akun Admin / Kasir terdaftar.
+              </p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-gold-300 mb-1">Nama Pengguna (Username)</label>
+                <input id="login-username" type="text" placeholder="Masukkan username" autocapitalize="off" class="w-full px-4 py-2.5 rounded-xl bg-obsidian-900 border border-gold-500/30 text-white placeholder-zinc-600 gold-border-glow text-xs">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-gold-300 mb-1">Kata Sandi (Password)</label>
+                <input id="login-password" type="password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl bg-obsidian-900 border border-gold-500/30 text-white placeholder-zinc-600 gold-border-glow text-xs">
+              </div>
+
+              <div id="login-error" class="text-rose-400 text-xs font-medium text-center min-h-[1.25rem]"></div>
+
+              <button type="submit" class="w-full py-3 px-4 rounded-xl btn-gold text-xs tracking-wider uppercase font-bold flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>Masuk ke Aplikasi</span>
+              </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-zinc-800 text-center">
+              <p class="text-[11px] text-zinc-500">Akun Admin Default:</p>
+              <div class="inline-block mt-1 px-3 py-1 rounded-lg bg-obsidian-900 border border-gold-500/20 text-[11px] text-gold-300 font-mono">
+                Username: <b class="text-white">yusufw</b> | Password: <b class="text-white">11223344</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       MANAJEMEN PENGGUNA
+       ========================================================================== */
+    async function addUser() {
+      const name = $('#new-name').value.trim();
+      const user = $('#new-username').value.trim().toLowerCase();
+      const pass = $('#new-password').value;
+      const role = $('#new-role').value;
+      const errEl = $('#user-error');
+
+      if (!name || !user || pass.length < 4) {
+        errEl.textContent = 'Semua bidang wajib diisi (Kata sandi min. 4 karakter)';
+        return;
+      }
+      if (AppState.users.some(x => x.user === user)) {
+        errEl.textContent = 'Nama pengguna sudah terpakai';
+        return;
+      }
+
+      AppState.users.push({
+        id: uid(),
+        name,
+        user,
+        hash: await hashPassword(user, pass),
+        role
+      });
+      saveData();
+      renderApp();
+      showToast('Pengguna baru berhasil ditambahkan');
+    }
+
+    function deleteUser(id) {
+      const target = AppState.users.find(u => u.id === id);
+      if (target && target.role === 'admin') {
+        const adminCount = AppState.users.filter(u => u.role === 'admin').length;
+        if (adminCount <= 1) {
+          showToast('Minimal harus ada 1 Administrator di sistem');
+          return;
+        }
+      }
+      AppState.users = AppState.users.filter(u => u.id !== id);
+      saveData();
+      renderApp();
+      showToast('Pengguna berhasil dihapus');
+    }
+
+    async function changeUserPassword(id, inputElement) {
+      const newPass = inputElement.value;
+      if (!newPass || newPass.length < 4) {
+        showToast('Kata sandi minimal 4 karakter');
+        return;
+      }
+      const u = AppState.users.find(x => x.id === id);
+      if (u) {
+        u.hash = await hashPassword(u.user, newPass);
+        saveData();
+        inputElement.value = '';
+        showToast(`Kata sandi untuk ${u.name} berhasil diperbarui`);
+      }
+    }
+
+    function renderUserView() {
+      return `
+        <div class="space-y-6">
+          <div class="flex items-center justify-between border-b border-gold-500/20 pb-4">
+            <div>
+              <h2 class="text-xl font-bold font-serif-gold">Manajemen Pengguna</h2>
+              <p class="text-xs text-zinc-400">Atur hak akses Administrator dan Kasir aplikasi TITIK0</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${AppState.users.map(u => `
+              <div class="bg-card-dark rounded-xl p-4 gold-border space-y-3">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="font-bold text-white flex items-center gap-2">
+                      ${escapeHtml(u.name)}
+                      ${u.id === UIState.currentUser.id ? '<span class="text-[10px] bg-gold-500/20 text-gold-300 px-2 py-0.5 rounded-full border border-gold-500/40">Anda</span>' : ''}
+                    </h3>
+                    <p class="text-xs text-zinc-400">@${escapeHtml(u.user)} · <span class="capitalize text-gold-400 font-semibold">${u.role}</span></p>
+                  </div>
+                  ${u.id !== UIState.currentUser.id ? `
+                    <button onclick="deleteUser('${u.id}')" class="text-rose-400 hover:text-rose-300 text-xs px-2 py-1 rounded bg-rose-500/10 border border-rose-500/20">
+                      <i class="fa-solid fa-trash"></i> Hapus
+                    </button>
+                  ` : ''}
+                </div>
+
+                <div class="pt-2 border-t border-zinc-800 flex gap-2">
+                  <input type="password" placeholder="Kata sandi baru" class="flex-1 px-3 py-1.5 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                  <button onclick="changeUserPassword('${u.id}', this.previousElementSibling)" class="btn-gold-outline text-xs px-3 py-1.5 rounded-lg font-medium">
+                    Ubah Sandi
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Formulir Tambah Pengguna -->
+          <div class="bg-card-dark rounded-xl p-5 gold-border space-y-4 max-w-xl">
+            <h3 class="font-bold text-gold-400 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-user-plus"></i> Tambah Pengguna Baru
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="new-name" placeholder="Nama Lengkap" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <input id="new-username" placeholder="Nama Pengguna (Username)" autocapitalize="off" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <input id="new-password" type="password" placeholder="Kata Sandi (min. 4 karakter)" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <select id="new-role" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                <option value="kasir">Peran: Kasir</option>
+                <option value="admin">Peran: Admin</option>
+              </select>
+            </div>
+            <div id="user-error" class="text-rose-400 text-xs"></div>
+            <button onclick="addUser()" class="btn-gold px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
+              Simpan Pengguna
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       TRANSAKSI & KASIR (PESANAN)
+       ========================================================================== */
+    function adjustCart(menuId, delta) {
+      UIState.cart[menuId] = (UIState.cart[menuId] || 0) + delta;
+      if (UIState.cart[menuId] <= 0) {
+        delete UIState.cart[menuId];
+      }
+      renderApp();
+    }
+
+    function clearCart() {
+      UIState.cart = {};
+      UIState.custName = '';
+      UIState.custTable = '';
+      UIState.cashPaid = '';
+      renderApp();
+    }
+
+    function processStockInventory(items, direction = 1) {
+      items.forEach(item => {
+        const m = AppState.menu.find(x => x.id === item.id);
+        if (!m || !m.rec) return;
+        m.rec.forEach(r => {
+          const s = AppState.stock.find(st => st.id === r.s);
+          if (s) {
+            s.qty = Math.max(0, Math.round((s.qty - direction * r.q * item.qty) * 100) / 100);
+          }
+        });
+      });
+    }
+
+    function saveOrderAndPrint() {
+      const itemKeys = Object.keys(UIState.cart);
+      if (!itemKeys.length) return;
+
+      const items = itemKeys.map(id => {
+        const m = AppState.menu.find(x => x.id === id);
+        return {
+          id,
+          name: m ? m.name : 'Item Tidak Diketahui',
+          price: m ? m.price : 0,
+          qty: UIState.cart[id]
+        };
+      });
+
+      const totalAmount = items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const cashGiven = parseFloat(UIState.cashPaid) || 0;
+
+      if (UIState.paymentMethod === 'Tunai' && cashGiven < totalAmount) {
+        showToast('Uang tunai kurang dari total tagihan!');
+        return;
+      }
+
+      // Periksa kebutuhan stok bahan baku
+      const requiredMaterials = {};
+      items.forEach(i => {
+        const m = AppState.menu.find(x => x.id === i.id);
+        if (m && m.rec) {
+          m.rec.forEach(r => {
+            requiredMaterials[r.s] = (requiredMaterials[r.s] || 0) + (r.q * i.qty);
+          });
+        }
+      });
+
+      const lowStockNames = Object.keys(requiredMaterials)
+        .map(sId => AppState.stock.find(x => x.id === sId))
+        .filter(stk => stk && stk.qty < requiredMaterials[stk.id])
+        .map(stk => stk.name);
+
+      const now = new Date();
+      const order = {
+        id: 'TRX-' + Date.now().toString().slice(-6),
+        date: UIState.date,
+        time: padTwo(now.getHours()) + ':' + padTwo(now.getMinutes()),
+        cust: UIState.custName.trim() || 'Pelanggan',
+        table: UIState.custTable.trim() || '-',
+        items,
+        total: totalAmount,
+        paymentMethod: UIState.paymentMethod,
+        cashPaid: UIState.paymentMethod === 'Tunai' ? cashGiven : totalAmount,
+        change: UIState.paymentMethod === 'Tunai' ? Math.max(0, cashGiven - totalAmount) : 0,
+        done: true,
+        by: UIState.currentUser.name
+      };
+
+      AppState.orders.push(order);
+      processStockInventory(items, 1);
+      saveData();
+
+      // Kosongkan Keranjang
+      UIState.cart = {};
+      UIState.custName = '';
+      UIState.custTable = '';
+      UIState.cashPaid = '';
+
+      renderApp();
+
+      if (lowStockNames.length > 0) {
+        showToast(`Pesanan Tersimpan! (Peringatan Stok Kurang: ${lowStockNames.join(', ')})`, 4000);
+      } else {
+        showToast('Pesanan Berhasil Disimpan!');
+      }
+
+      openReceiptModal(order.id);
+    }
+
+    function toggleOrderDone(id) {
+      const o = AppState.orders.find(x => x.id === id);
+      if (o) {
+        o.done = !o.done;
+        saveData();
+        renderApp();
+      }
+    }
+
+    function deleteOrder(id) {
+      const o = AppState.orders.find(x => x.id === id);
+      if (!o) return;
+
+      if (confirm(`Hapus pesanan ${o.id} dan kembalikan stok bahan baku?`)) {
+        processStockInventory(o.items, -1);
+        AppState.orders = AppState.orders.filter(x => x.id !== id);
+        saveData();
+        renderApp();
+        showToast('Pesanan dihapus & stok dikembalikan');
+      }
+    }
+
+    /* Dialog Cetak Struk Thermal */
+    function openReceiptModal(orderId) {
+      const o = AppState.orders.find(x => x.id === orderId);
+      if (!o) return;
+
+      const modalEl = $('#modal-container');
+      modalEl.classList.remove('hidden');
+
+      modalEl.innerHTML = `
+        <div class="bg-obsidian-900 border border-gold-500/40 rounded-2xl max-w-md w-full p-6 text-white shadow-2xl space-y-4 no-print relative">
+          <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+            <h3 class="text-sm font-bold text-gold-400 flex items-center gap-2">
+              <i class="fa-solid fa-receipt"></i> Struk Transaksi TITIK0
+            </h3>
+            <button onclick="closeModal()" class="text-zinc-400 hover:text-white">
+              <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+          </div>
+
+          <!-- Struk Thermal Standard (58mm/80mm) -->
+          <div id="printable-receipt" class="bg-white text-black p-4 rounded text-xs font-mono shadow-inner border border-zinc-300 leading-tight">
+            <div class="text-center font-bold text-base tracking-widest">TITIK0</div>
+            <div class="text-center text-[10px] mb-2">${escapeHtml(AppState.store.address)} | Telp: ${escapeHtml(AppState.store.phone)}</div>
+            <div class="border-b border-dashed border-black my-2"></div>
+
+            <div class="flex justify-between"><span>No: ${o.id}</span><span>${o.date} ${o.time}</span></div>
+            <div class="flex justify-between"><span>Kasir: ${escapeHtml(o.by)}</span><span>Meja: ${escapeHtml(o.table)}</span></div>
+            <div class="flex justify-between"><span>Pelanggan: ${escapeHtml(o.cust)}</span><span>Bayar: ${o.paymentMethod}</span></div>
+            
+            <div class="border-b border-dashed border-black my-2"></div>
+
+            <div class="space-y-1">
+              ${o.items.map(i => `
+                <div>
+                  <div class="font-bold">${escapeHtml(i.name)}</div>
+                  <div class="flex justify-between pl-2">
+                    <span>${i.qty} x ${rp(i.price)}</span>
+                    <span>${rp(i.qty * i.price)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="border-b border-dashed border-black my-2"></div>
+
+            <div class="flex justify-between font-bold text-sm">
+              <span>TOTAL</span>
+              <span>${rp(o.total)}</span>
+            </div>
+            ${o.paymentMethod === 'Tunai' ? `
+              <div class="flex justify-between text-xs">
+                <span>Uang Tunai</span>
+                <span>${rp(o.cashPaid)}</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span>Kembalian</span>
+                <span>${rp(o.change)}</span>
+              </div>
+            ` : ''}
+
+            <div class="border-b border-dashed border-black my-3"></div>
+            <div class="text-center text-[10px] space-y-1">
+              <div>Terima kasih atas kunjungan Anda</div>
+              <div class="font-bold">TITIK0</div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button onclick="window.print()" class="flex-1 btn-gold py-2.5 rounded-xl text-xs uppercase font-bold flex items-center justify-center gap-2">
+              <i class="fa-solid fa-print"></i> Cetak Struk / PDF
+            </button>
+            <button onclick="closeModal()" class="btn-gold-outline px-4 py-2.5 rounded-xl text-xs font-bold">
+              Tutup
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      const modalEl = $('#modal-container');
+      modalEl.classList.add('hidden');
+      modalEl.innerHTML = '';
+    }
+
+    function renderOrderView() {
+      const todaysOrders = AppState.orders
+        .filter(o => o.date === UIState.date)
+        .sort((a, b) => b.time.localeCompare(a.time));
+
+      const totalRevenueToday = todaysOrders.reduce((sum, o) => sum + o.total, 0);
+
+      const cartItemIds = Object.keys(UIState.cart);
+      const cartTotal = cartItemIds.reduce((sum, id) => {
+        const m = AppState.menu.find(x => x.id === id);
+        return sum + (m ? m.price * UIState.cart[id] : 0);
+      }, 0);
+
+      const cashPaidVal = parseFloat(UIState.cashPaid) || 0;
+      const changeAmount = UIState.paymentMethod === 'Tunai' ? Math.max(0, cashPaidVal - cartTotal) : 0;
+
+      const filteredMenu = AppState.menu.filter(m => {
+        const matchSearch = m.name.toLowerCase().includes(UIState.menuSearch.toLowerCase());
+        const matchCat = UIState.menuCategory === 'semua' || m.cat === UIState.menuCategory;
+        return matchSearch && matchCat;
+      });
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- KATALOG MENU (7 Kolom) -->
+          <div class="lg:col-span-7 space-y-4">
+            
+            <!-- Bilah Pencarian & Kategori -->
+            <div class="bg-card-dark rounded-xl p-4 gold-border space-y-3">
+              <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full sm:w-64">
+                  <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gold-400/60 text-xs"></i>
+                  <input type="text" placeholder="Cari menu kopi, minuman..." value="${escapeHtml(UIState.menuSearch)}" oninput="UIState.menuSearch=this.value; renderApp();" class="w-full pl-9 pr-3 py-2 rounded-xl bg-obsidian-900 border border-gold-500/20 text-xs text-white placeholder-zinc-500 gold-border-glow">
+                </div>
+                
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+                  ${['semua', 'kopi', 'minum', 'makan'].map(cat => `
+                    <button onclick="UIState.menuCategory='${cat}'; renderApp();" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold capitalize whitespace-nowrap transition-all ${UIState.menuCategory === cat ? 'bg-gold-500 text-black shadow-md shadow-gold-500/20' : 'bg-obsidian-900 text-zinc-400 hover:text-gold-300 border border-gold-500/20'}">
+                      ${cat === 'minum' ? 'Minuman' : cat === 'makan' ? 'Makanan' : cat}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- Grid Kartu Menu -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              ${filteredMenu.length > 0 ? filteredMenu.map(m => `
+                <div onclick="adjustCart('${m.id}', 1)" class="bg-card-dark rounded-xl p-3.5 gold-border hover:border-gold-500/60 transition-all cursor-pointer group flex flex-col justify-between h-36">
+                  <div>
+                    <div class="flex items-center justify-between text-[10px] text-gold-400 uppercase tracking-wider mb-1 font-semibold">
+                      <span>${m.cat === 'minum' ? 'Minuman' : m.cat === 'makan' ? 'Makanan' : m.cat}</span>
+                      <i class="fa-solid ${m.cat === 'kopi' ? 'fa-mug-saucer' : m.cat === 'minum' ? 'fa-glass-water' : 'fa-utensils'}"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-xs sm:text-sm group-hover:text-gold-300 transition-colors line-clamp-2">${escapeHtml(m.name)}</h4>
+                  </div>
+                  <div>
+                    <div class="text-gold-400 font-extrabold text-sm">${rp(m.price)}</div>
+                    <div class="mt-1 flex items-center justify-between text-[10px] text-zinc-400">
+                      <span>+ Tambah</span>
+                      ${UIState.cart[m.id] ? `<span class="bg-gold-500 text-black font-bold px-1.5 py-0.5 rounded-full text-[10px]">${UIState.cart[m.id]}</span>` : ''}
+                    </div>
+                  </div>
+                </div>
+              `).join('') : `
+                <div class="col-span-full py-12 text-center text-zinc-500 text-xs">
+                  <i class="fa-solid fa-mug-hot text-3xl mb-2 text-zinc-600 block"></i>
+                  Tidak ada menu yang sesuai dengan kriteria pencarian
+                </div>
+              `}
+            </div>
+          </div>
+
+          <!-- KERANJANG PESANAN & CHECKOUT KASIR (5 Kolom) -->
+          <div class="lg:col-span-5 space-y-4">
+            
+            <div class="bg-card-dark rounded-xl p-5 gold-border space-y-4">
+              <div class="flex items-center justify-between border-b border-gold-500/20 pb-3">
+                <h3 class="font-bold text-gold-400 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-cart-shopping"></i> Keranjang Pesanan
+                </h3>
+                ${cartItemIds.length > 0 ? `
+                  <button onclick="clearCart()" class="text-rose-400 hover:text-rose-300 text-xs font-semibold">
+                    <i class="fa-solid fa-trash-can"></i> Bersihkan
+                  </button>
+                ` : ''}
+              </div>
+
+              <!-- Daftar Item Keranjang -->
+              <div class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                ${cartItemIds.length > 0 ? cartItemIds.map(id => {
+                  const m = AppState.menu.find(x => x.id === id);
+                  const qty = UIState.cart[id];
+                  return `
+                    <div class="flex items-center justify-between bg-obsidian-900 p-2.5 rounded-xl border border-gold-500/10">
+                      <div class="flex-1 pr-2">
+                        <div class="text-xs font-bold text-white">${escapeHtml(m ? m.name : '')}</div>
+                        <div class="text-[11px] text-gold-400">${rp(m ? m.price : 0)} x ${qty} = ${rp((m ? m.price : 0) * qty)}</div>
+                      </div>
+                      <div class="flex items-center gap-2 bg-obsidian-800 rounded-lg p-1 border border-gold-500/20">
+                        <button onclick="adjustCart('${id}', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white font-bold text-xs flex items-center justify-center hover:bg-gold-500 hover:text-black">-</button>
+                        <span class="text-xs font-bold text-gold-300 w-4 text-center">${qty}</span>
+                        <button onclick="adjustCart('${id}', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white font-bold text-xs flex items-center justify-center hover:bg-gold-500 hover:text-black">+</button>
+                      </div>
+                    </div>
+                  `;
+                }).join('') : `
+                  <div class="text-center py-6 text-zinc-500 text-xs">
+                    Keranjang masih kosong. Ketuk item di katalog untuk menambah.
+                  </div>
+                `}
+              </div>
+
+              <!-- Input Informasi Pelanggan -->
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800">
+                <input type="text" placeholder="Nama Pelanggan" value="${escapeHtml(UIState.custName)}" oninput="UIState.custName=this.value" class="px-3 py-2 rounded-xl bg-obsidian-900 border border-gold-500/20 text-xs text-white placeholder-zinc-600 gold-border-glow">
+                <input type="text" placeholder="No. Meja / Bawa Pulang" value="${escapeHtml(UIState.custTable)}" oninput="UIState.custTable=this.value" class="px-3 py-2 rounded-xl bg-obsidian-900 border border-gold-500/20 text-xs text-white placeholder-zinc-600 gold-border-glow">
+              </div>
+
+              <!-- Pilihan Metode Pembayaran -->
+              <div class="space-y-2">
+                <label class="block text-[11px] font-semibold text-gold-400 uppercase tracking-wider">Metode Pembayaran</label>
+                <div class="grid grid-cols-3 gap-2">
+                  ${['Tunai', 'QRIS', 'Transfer'].map(method => `
+                    <button onclick="UIState.paymentMethod='${method}'; renderApp();" class="py-2 rounded-xl text-xs font-bold border transition-all ${UIState.paymentMethod === method ? 'bg-gold-500 text-black border-gold-400 shadow-md shadow-gold-500/20' : 'bg-obsidian-900 text-zinc-400 border-gold-500/20 hover:text-gold-300'}">
+                      ${method}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Kalkulator Uang Tunai & Kembalian -->
+              ${UIState.paymentMethod === 'Tunai' && cartTotal > 0 ? `
+                <div class="bg-obsidian-900/80 p-3 rounded-xl border border-gold-500/20 space-y-2">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="text-zinc-400">Nominal Uang Tunai:</span>
+                    <input type="number" placeholder="Rp 0" value="${UIState.cashPaid}" oninput="UIState.cashPaid=this.value; renderApp();" class="w-32 px-2 py-1 text-right font-bold rounded bg-obsidian-800 border border-gold-500/30 text-gold-300 text-xs gold-border-glow">
+                  </div>
+                  
+                  <div class="flex gap-1.5 justify-end">
+                    <button onclick="UIState.cashPaid='${cartTotal}'; renderApp();" class="text-[10px] px-2 py-1 rounded bg-zinc-800 text-gold-400 border border-gold-500/20 hover:bg-gold-500 hover:text-black">Uang Pas</button>
+                    <button onclick="UIState.cashPaid='50000'; renderApp();" class="text-[10px] px-2 py-1 rounded bg-zinc-800 text-gold-400 border border-gold-500/20 hover:bg-gold-500 hover:text-black">50rb</button>
+                    <button onclick="UIState.cashPaid='100000'; renderApp();" class="text-[10px] px-2 py-1 rounded bg-zinc-800 text-gold-400 border border-gold-500/20 hover:bg-gold-500 hover:text-black">100rb</button>
+                  </div>
+
+                  <div class="flex justify-between items-center text-xs pt-1 border-t border-zinc-800 font-bold">
+                    <span class="text-zinc-400">Kembalian:</span>
+                    <span class="${changeAmount >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${rp(changeAmount)}</span>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Total Tagihan & Tombol Simpan -->
+              <div class="pt-2 border-t border-gold-500/20 space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs text-zinc-400 font-medium uppercase tracking-wider">Total Tagihan</span>
+                  <span class="text-xl font-extrabold text-gold-400 font-serif-gold">${rp(cartTotal)}</span>
+                </div>
+
+                <button onclick="saveOrderAndPrint()" ${cartItemIds.length === 0 ? 'disabled' : ''} class="w-full py-3 rounded-xl btn-gold text-xs uppercase font-bold tracking-wider flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-check-circle"></i> Simpan Pesanan & Cetak Struk
+                </button>
+              </div>
+            </div>
+
+            <!-- RIWAYAT PESANAN HARI INI -->
+            <div class="bg-card-dark rounded-xl p-4 gold-border space-y-3">
+              <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                <div class="text-xs font-bold text-gold-400 flex items-center gap-2">
+                  <i class="fa-solid fa-clock-rotate-left"></i> Pesanan Hari Ini (${todaysOrders.length})
+                </div>
+                <div class="text-xs font-bold text-zinc-300">${rp(totalRevenueToday)}</div>
+              </div>
+
+              <div class="space-y-2 max-h-60 overflow-y-auto">
+                ${todaysOrders.length > 0 ? todaysOrders.map(o => `
+                  <div class="bg-obsidian-900 p-3 rounded-xl border border-gold-500/10 flex flex-col gap-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="font-bold text-white">${o.time} · ${escapeHtml(o.cust)} (${escapeHtml(o.table)})</span>
+                      <span class="font-extrabold text-gold-400">${rp(o.total)}</span>
+                    </div>
+                    <div class="text-[11px] text-zinc-400 truncate">
+                      ${o.items.map(i => `${i.qty}x ${escapeHtml(i.name)}`).join(', ')}
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] text-zinc-500 pt-1 border-t border-zinc-800">
+                      <span>Metode: <strong class="text-gold-300">${o.paymentMethod}</strong></span>
+                      <div class="flex gap-2.5">
+                        <button onclick="openReceiptModal('${o.id}')" class="text-gold-400 hover:text-gold-300">
+                          <i class="fa-solid fa-print"></i> Struk
+                        </button>
+                        <button onclick="deleteOrder('${o.id}')" class="text-rose-400 hover:text-rose-300">
+                          <i class="fa-solid fa-trash"></i> Hapus
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `).join('') : `
+                  <div class="text-center py-4 text-zinc-500 text-xs">Belum ada pesanan pada tanggal ${UIState.date}</div>
+                `}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       REKAPITULASI & ANALITIK
+       ========================================================================== */
+    function exportRekapCSV() {
+      const filteredOrders = AppState.orders.filter(o => o.date.startsWith(UIState.month));
+      if (!filteredOrders.length) {
+        showToast('Tidak ada data transaksi untuk diekspor pada bulan ini');
+        return;
+      }
+
+      let csv = 'ID Transaksi,Tanggal,Waktu,Pelanggan,Meja,Metode Pembayaran,Total Omzet,Kasir\n';
+      filteredOrders.forEach(o => {
+        csv += `"${o.id}","${o.date}","${o.time}","${o.cust.replace(/"/g, '""')}","${o.table}","${o.paymentMethod}",${o.total},"${o.by}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Rekap_TITIK0_${UIState.month}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Data Rekapitulasi CSV Berhasil Diunduh!');
+    }
+
+    function renderRekapView() {
+      const monthOrders = AppState.orders.filter(o => o.date.startsWith(UIState.month));
+
+      const daysMap = {};
+      const itemsMap = {};
+      const paymentMap = { Tunai: 0, QRIS: 0, Transfer: 0 };
+
+      let totalRevenue = 0;
+      let totalItemsCount = 0;
+
+      monthOrders.forEach(o => {
+        const d = daysMap[o.date] || (daysMap[o.date] = { count: 0, items: 0, total: 0 });
+        d.count++;
+        d.total += o.total;
+
+        totalRevenue += o.total;
+
+        if (paymentMap[o.paymentMethod] !== undefined) {
+          paymentMap[o.paymentMethod] += o.total;
+        }
+
+        o.items.forEach(i => {
+          d.items += i.qty;
+          totalItemsCount += i.qty;
+          const x = itemsMap[i.name] || (itemsMap[i.name] = { qty: 0, total: 0 });
+          x.qty += i.qty;
+          x.total += i.qty * i.price;
+        });
+      });
+
+      const activeDays = Object.keys(daysMap).sort();
+      const avgRevenuePerDay = activeDays.length > 0 ? totalRevenue / activeDays.length : 0;
+      const topItems = Object.entries(itemsMap).sort((a, b) => b[1].qty - a[1].qty);
+
+      return `
+        <div class="space-y-6">
+          
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gold-500/20 pb-4">
+            <div>
+              <h2 class="text-xl font-bold font-serif-gold">Rekapitulasi Penjualan</h2>
+              <p class="text-xs text-zinc-400">Laporan penjualan bulanan dan performa menu TITIK0</p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <input type="month" value="${UIState.month}" onchange="UIState.month=this.value || getTodayDate().slice(0,7); renderApp();" class="px-3 py-2 rounded-xl bg-obsidian-900 border border-gold-500/30 text-xs text-gold-300 gold-border-glow">
+              <button onclick="exportRekapCSV()" class="btn-gold-outline px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-file-csv"></i> Ekspor CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Kartu Ringkasan Statistik -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-card-dark p-4 rounded-xl gold-border space-y-1">
+              <div class="text-[11px] text-zinc-400 uppercase font-semibold">Total Omzet Bulanan</div>
+              <div class="text-xl font-extrabold text-gold-400 font-serif-gold">${rp(totalRevenue)}</div>
+              <div class="text-[10px] text-zinc-500">${monthOrders.length} Transaksi Selesai</div>
+            </div>
+            <div class="bg-card-dark p-4 rounded-xl gold-border space-y-1">
+              <div class="text-[11px] text-zinc-400 uppercase font-semibold">Total Item Terjual</div>
+              <div class="text-xl font-extrabold text-white font-serif-gold">${totalItemsCount} <span class="text-xs font-sans text-zinc-400">pcs</span></div>
+              <div class="text-[10px] text-zinc-500">Semua Kategori Menu</div>
+            </div>
+            <div class="bg-card-dark p-4 rounded-xl gold-border space-y-1">
+              <div class="text-[11px] text-zinc-400 uppercase font-semibold">Rata-rata Omzet / Hari</div>
+              <div class="text-xl font-extrabold text-gold-400 font-serif-gold">${rp(avgRevenuePerDay)}</div>
+              <div class="text-[10px] text-zinc-500">${activeDays.length} Hari Aktif Penjualan</div>
+            </div>
+            <div class="bg-card-dark p-4 rounded-xl gold-border space-y-1">
+              <div class="text-[11px] text-zinc-400 uppercase font-semibold">Non-Tunai (QRIS & Bank)</div>
+              <div class="text-xl font-extrabold text-emerald-400 font-serif-gold">${rp(paymentMap.QRIS + paymentMap.Transfer)}</div>
+              <div class="text-[10px] text-zinc-500">Tunai: ${rp(paymentMap.Tunai)}</div>
+            </div>
+          </div>
+
+          <!-- Tabel Rincian Data -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Tabel Rincian Penjualan Harian (7 Kolom) -->
+            <div class="lg:col-span-7 bg-card-dark rounded-xl p-4 gold-border space-y-3">
+              <h3 class="text-sm font-bold text-gold-400 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-day"></i> Rincian Penjualan Harian
+              </h3>
+              
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-obsidian-900 text-gold-400 border-b border-gold-500/20">
+                    <tr>
+                      <th class="p-2.5">Tanggal</th>
+                      <th class="p-2.5">Pesanan</th>
+                      <th class="p-2.5">Item</th>
+                      <th class="p-2.5 text-right">Omzet</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                    ${activeDays.length > 0 ? activeDays.map(dateKey => `
+                      <tr class="hover:bg-obsidian-900/50">
+                        <td class="p-2.5 font-medium text-white">${dateKey}</td>
+                        <td class="p-2.5 text-zinc-300">${daysMap[dateKey].count}</td>
+                        <td class="p-2.5 text-zinc-300">${daysMap[dateKey].items} pcs</td>
+                        <td class="p-2.5 text-right font-bold text-gold-400">${rp(daysMap[dateKey].total)}</td>
+                      </tr>
+                    `).join('') : `
+                      <tr><td colspan="4" class="p-6 text-center text-zinc-500">Belum ada data penjualan pada bulan ini.</td></tr>
+                    `}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tabel Menu Terlaris (5 Kolom) -->
+            <div class="lg:col-span-5 bg-card-dark rounded-xl p-4 gold-border space-y-3">
+              <h3 class="text-sm font-bold text-gold-400 flex items-center gap-2">
+                <i class="fa-solid fa-crown"></i> Menu Terlaris
+              </h3>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-obsidian-900 text-gold-400 border-b border-gold-500/20">
+                    <tr>
+                      <th class="p-2.5">Menu</th>
+                      <th class="p-2.5">Terjual</th>
+                      <th class="p-2.5 text-right">Omzet</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                    ${topItems.length > 0 ? topItems.map(([name, data], idx) => `
+                      <tr class="hover:bg-obsidian-900/50">
+                        <td class="p-2.5 font-medium text-white flex items-center gap-2">
+                          <span class="w-4 text-center font-bold text-[10px] ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-zinc-300' : idx === 2 ? 'text-amber-700' : 'text-zinc-600'}">
+                            ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                          </span>
+                          <span>${escapeHtml(name)}</span>
+                        </td>
+                        <td class="p-2.5 text-zinc-300 font-bold">${data.qty}</td>
+                        <td class="p-2.5 text-right text-gold-400 font-semibold">${rp(data.total)}</td>
+                      </tr>
+                    `).join('') : `
+                      <tr><td colspan="3" class="p-6 text-center text-zinc-500">-</td></tr>
+                    `}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       MANAJEMEN STOK BAHAN & CADANGAN DATA
+       ========================================================================== */
+    function setStock(id, field, value) {
+      const s = AppState.stock.find(x => x.id === id);
+      if (!s) return;
+      if (field === 'name') s.name = value.trim() || s.name;
+      else s[field] = parseFloat(value) || 0;
+      saveData();
+    }
+
+    function incStock(id, inputElement) {
+      const amount = parseFloat(inputElement.value);
+      if (!amount) return;
+      const s = AppState.stock.find(x => x.id === id);
+      if (s) {
+        s.qty = Math.round((s.qty + amount) * 100) / 100;
+        saveData();
+        inputElement.value = '';
+        renderApp();
+        showToast(`Stok ${s.name} bertambah +${amount} ${s.unit}`);
+      }
+    }
+
+    function addStock() {
+      const name = $('#new-stock-name').value.trim();
+      const unit = $('#new-stock-unit').value.trim() || 'pcs';
+      const qty = parseFloat($('#new-stock-qty').value) || 0;
+      const min = parseFloat($('#new-stock-min').value) || 0;
+
+      if (!name) {
+        showToast('Ketik nama bahan mentah / barang');
+        return;
+      }
+
+      AppState.stock.push({
+        id: uid(),
+        name,
+        unit,
+        qty,
+        min
+      });
+      saveData();
+      renderApp();
+      showToast('Bahan/Barang baru berhasil ditambahkan');
+    }
+
+    function deleteStock(id) {
+      if (confirm('Hapus bahan ini dari daftar stok?')) {
+        AppState.stock = AppState.stock.filter(x => x.id !== id);
+        AppState.menu.forEach(m => {
+          m.rec = (m.rec || []).filter(r => r.s !== id);
+        });
+        saveData();
+        renderApp();
+        showToast('Bahan berhasil dihapus');
+      }
+    }
+
+    function exportBackupJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(AppState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `TITIK0_Cadangan_${getTodayDate()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('File Cadangan Data JSON Berhasil Diunduh!');
+    }
+
+    function importBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.menu) && Array.isArray(parsed.stock)) {
+            AppState = parsed;
+            saveData();
+            renderApp();
+            showToast('Data Aplikasi Berhasil Dipulihkan!');
+          } else {
+            showToast('Format file cadangan JSON tidak valid');
+          }
+        } catch (err) {
+          showToast('Gagal membaca file JSON');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderStockView() {
+      const lowStockCount = AppState.stock.filter(s => s.qty <= s.min).length;
+
+      return `
+        <div class="space-y-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gold-500/20 pb-4">
+            <div>
+              <h2 class="text-xl font-bold font-serif-gold flex items-center gap-2">
+                <span>Stok Bahan & Barang</span>
+                ${lowStockCount > 0 ? `<span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-sans">${lowStockCount} Perlu Isi Ulang</span>` : ''}
+              </h2>
+              <p class="text-xs text-zinc-400">Kelola stok bahan baku mentah dan batas minimum inventoris</p>
+            </div>
+
+            <!-- Tombol Cadangkan & Pulihkan Data JSON -->
+            <div class="flex items-center gap-2">
+              <button onclick="exportBackupJSON()" class="btn-gold-outline px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i> Cadangkan JSON
+              </button>
+              <label class="btn-gold-outline px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-upload"></i> Pulihkan JSON
+                <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+              </label>
+            </div>
+          </div>
+
+          <!-- Tabel Stok -->
+          <div class="bg-card-dark rounded-xl p-4 gold-border space-y-3">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-obsidian-900 text-gold-400 border-b border-gold-500/20">
+                  <tr>
+                    <th class="p-2.5">Nama Bahan</th>
+                    <th class="p-2.5">Jumlah Stok</th>
+                    <th class="p-2.5">Satuan</th>
+                    <th class="p-2.5">Batas Min.</th>
+                    <th class="p-2.5">Tambah Stok (+Masuk)</th>
+                    <th class="p-2.5 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800">
+                  ${AppState.stock.map(s => {
+                    const isLow = s.qty <= s.min;
+                    return `
+                      <tr class="${isLow ? 'bg-amber-500/10' : 'hover:bg-obsidian-900/50'}">
+                        <td class="p-2">
+                          <input type="text" value="${escapeHtml(s.name)}" onchange="setStock('${s.id}','name',this.value)" class="w-40 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-white font-medium text-xs gold-border-glow">
+                        </td>
+                        <td class="p-2">
+                          <input type="number" value="${s.qty}" onchange="setStock('${s.id}','qty',this.value)" class="w-20 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-gold-300 font-bold text-xs gold-border-glow">
+                        </td>
+                        <td class="p-2 text-zinc-400 font-semibold">${escapeHtml(s.unit)}</td>
+                        <td class="p-2">
+                          <input type="number" value="${s.min}" onchange="setStock('${s.id}','min',this.value)" class="w-16 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-zinc-400 text-xs gold-border-glow">
+                        </td>
+                        <td class="p-2">
+                          <div class="flex items-center gap-1.5">
+                            <input type="number" placeholder="+Jml" class="w-16 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                            <button onclick="incStock('${s.id}', this.previousElementSibling)" class="btn-gold text-[10px] px-2 py-1 rounded font-bold">
+                              + Masuk
+                            </button>
+                          </div>
+                        </td>
+                        <td class="p-2 text-center">
+                          <button onclick="deleteStock('${s.id}')" class="text-rose-400 hover:text-rose-300 px-2 py-1">
+                            <i class="fa-solid fa-xmark"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Form Tambah Bahan -->
+          <div class="bg-card-dark rounded-xl p-5 gold-border space-y-4 max-w-xl">
+            <h3 class="font-bold text-gold-400 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-plus-circle"></i> Tambah Bahan Baku Baru
+            </h3>
+            <div class="grid grid-cols-2 gap-3">
+              <input id="new-stock-name" placeholder="Nama Bahan (contoh: Susu Murni)" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <input id="new-stock-unit" placeholder="Satuan (gram, ml, pcs)" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <input id="new-stock-qty" type="number" placeholder="Jumlah Awal" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <input id="new-stock-min" type="number" placeholder="Batas Stok Minimum" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+            </div>
+            <button onclick="addStock()" class="btn-gold px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
+              Simpan Bahan Baru
+            </button>
+          </div>
+
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       MANAJEMEN MENU & RESEP (BOM)
+       ========================================================================== */
+    function setMenuField(id, field, value) {
+      const m = AppState.menu.find(x => x.id === id);
+      if (!m) return;
+      if (field === 'name') m.name = value.trim() || m.name;
+      else if (field === 'price') m.price = parseFloat(value) || 0;
+      saveData();
+      showToast('Menu berhasil diperbarui');
+    }
+
+    function addRecipeIngredient(menuId) {
+      const nameInput = $('#rec-s-' + menuId);
+      const qtyInput = $('#rec-q-' + menuId);
+      const unitInput = $('#rec-u-' + menuId);
+
+      const name = nameInput.value.trim();
+      const qty = parseFloat(qtyInput.value);
+
+      if (!name) {
+        showToast('Ketik nama bahan');
+        return;
+      }
+      if (!(qty > 0)) {
+        showToast('Isi jumlah bahan lebih dari 0');
+        return;
+      }
+
+      let stockItem = AppState.stock.find(x => x.name.toLowerCase() === name.toLowerCase());
+      let isNewStock = false;
+
+      if (!stockItem) {
+        stockItem = {
+          id: uid(),
+          name,
+          unit: unitInput.value.trim() || 'pcs',
+          qty: 0,
+          min: 0
+        };
+        AppState.stock.push(stockItem);
+        isNewStock = true;
+      }
+
+      const menu = AppState.menu.find(x => x.id === menuId);
+      menu.rec = (menu.rec || []).filter(r => r.s !== stockItem.id);
+      menu.rec.push({ s: stockItem.id, q: qty });
+
+      saveData();
+      renderApp();
+      showToast(isNewStock ? 'Bahan baru dibuat di Stok. Isi jumlahnya di tab Stok' : 'Resep bahan berhasil ditambahkan');
+    }
+
+    function deleteRecipeIngredient(menuId, stockId) {
+      const m = AppState.menu.find(x => x.id === menuId);
+      if (m) {
+        m.rec = m.rec.filter(r => r.s !== stockId);
+        saveData();
+        renderApp();
+      }
+    }
+
+    function addMenu() {
+      const name = $('#new-menu-name').value.trim();
+      const cat = $('#new-menu-cat').value;
+      const price = parseFloat($('#new-menu-price').value) || 0;
+
+      if (!name) {
+        showToast('Masukkan nama menu');
+        return;
+      }
+
+      AppState.menu.push({
+        id: uid(),
+        name,
+        cat,
+        price,
+        rec: []
+      });
+      saveData();
+      renderApp();
+      showToast('Menu baru berhasil ditambahkan');
+    }
+
+    function deleteMenu(id) {
+      if (confirm('Hapus menu ini?')) {
+        AppState.menu = AppState.menu.filter(x => x.id !== id);
+        delete UIState.cart[id];
+        saveData();
+        renderApp();
+        showToast('Menu berhasil dihapus');
+      }
+    }
+
+    function fillUnitSuggestion(menuId) {
+      const val = $('#rec-s-' + menuId).value.trim().toLowerCase();
+      const stock = AppState.stock.find(x => x.name.toLowerCase() === val);
+      const unitEl = $('#rec-u-' + menuId);
+      if (stock) {
+        unitEl.value = stock.unit;
+        unitEl.readOnly = true;
+      } else {
+        unitEl.readOnly = false;
+      }
+    }
+
+    function renderMenuView() {
+      return `
+        <div class="space-y-6">
+          <div class="flex items-center justify-between border-b border-gold-500/20 pb-4">
+            <div>
+              <h2 class="text-xl font-bold font-serif-gold">Manajemen Menu & Resep Bahan</h2>
+              <p class="text-xs text-zinc-400">Atur menu, harga jual, dan racikan resep bahan penyusunnya (BOM)</p>
+            </div>
+          </div>
+
+          <datalist id="stock-autocomplete-list">
+            ${AppState.stock.map(s => `<option value="${escapeHtml(s.name)}">`).join('')}
+          </datalist>
+
+          <!-- List Kartu Menu -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${AppState.menu.map(m => `
+              <div class="bg-card-dark rounded-xl p-4 gold-border space-y-3">
+                <div class="flex justify-between items-center gap-2 border-b border-zinc-800 pb-2">
+                  <input type="text" value="${escapeHtml(m.name)}" onchange="setMenuField('${m.id}','name',this.value)" class="flex-1 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-white font-bold text-sm gold-border-glow">
+                  <div class="flex items-center gap-1">
+                    <input type="number" value="${m.price}" onchange="setMenuField('${m.id}','price',this.value)" class="w-24 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-gold-400 font-bold text-xs gold-border-glow text-right">
+                    <button onclick="deleteMenu('${m.id}')" class="text-rose-400 hover:text-rose-300 p-1.5">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lencana Resep Bahan Terhubung -->
+                <div class="space-y-1">
+                  <div class="text-[10px] text-gold-400 uppercase font-semibold">Racikan Resep Bahan:</div>
+                  <div class="flex flex-wrap gap-1.5 min-h-[1.75rem]">
+                    ${(m.rec || []).map(r => {
+                      const st = AppState.stock.find(x => x.id === r.s);
+                      return st ? `
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-obsidian-900 border border-gold-500/30 text-xs text-zinc-300">
+                          ${escapeHtml(st.name)}: <strong>${r.q} ${escapeHtml(st.unit)}</strong>
+                          <button onclick="deleteRecipeIngredient('${m.id}', '${r.s}')" class="text-rose-400 hover:text-rose-300 font-bold ml-1">×</button>
+                        </span>
+                      ` : '';
+                    }).join('') || '<span class="text-xs text-zinc-600 italic">Belum ada resep bahan tersambung</span>'}
+                  </div>
+                </div>
+
+                <!-- Form Tambah Bahan ke Resep -->
+                <div class="pt-2 border-t border-zinc-800/80 flex flex-wrap gap-1.5 items-center">
+                  <input id="rec-s-${m.id}" list="stock-autocomplete-list" placeholder="Bahan" oninput="fillUnitSuggestion('${m.id}')" class="flex-1 min-w-[100px] px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                  <input id="rec-q-${m.id}" type="number" step="any" placeholder="Jml" class="w-14 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                  <input id="rec-u-${m.id}" placeholder="Satuan" class="w-16 px-2 py-1 rounded bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                  <button onclick="addRecipeIngredient('${m.id}')" class="btn-gold-outline text-[10px] px-2.5 py-1 rounded font-bold uppercase">
+                    + Bahan
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Form Tambah Menu Baru -->
+          <div class="bg-card-dark rounded-xl p-5 gold-border space-y-4 max-w-xl">
+            <h3 class="font-bold text-gold-400 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-mug-saucer"></i> Tambah Menu Baru
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input id="new-menu-name" placeholder="Nama Menu" class="sm:col-span-2 px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <select id="new-menu-cat" class="px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+                <option value="kopi">Kopi</option>
+                <option value="minum">Minuman Non-Kopi</option>
+                <option value="makan">Makanan</option>
+              </select>
+            </div>
+            <div class="flex gap-3">
+              <input id="new-menu-price" type="number" placeholder="Harga Jual (Rp)" class="flex-1 px-3 py-2 rounded-lg bg-obsidian-900 border border-gold-500/20 text-xs text-white gold-border-glow">
+              <button onclick="addMenu()" class="btn-gold px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
+                Simpan Menu
+              </button>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       PENGATUR TAMPILAN APLIKASI
+       ========================================================================== */
+    function renderApp() {
+      const appEl = $('#app');
+
+      if (!UIState.currentUser) {
+        return renderAuthScreen();
+      }
+
+      const isAdmin = UIState.currentUser.role === 'admin';
+
+      const navItems = [
+        ['order', 'Kasir', 'fa-cart-shopping'],
+        ['rekap', 'Rekap Bulanan', 'fa-chart-line'],
+        ['stok', 'Stok Bahan', 'fa-boxes-stacked'],
+        ['menu', 'Kelola Menu', 'fa-book-open'],
+        ['user', 'Pengguna', 'fa-users-gear']
+      ].filter(t => isAdmin || t[0] === 'order' || t[0] === 'rekap');
+
+      if (!navItems.some(n => n[0] === UIState.tab)) {
+        UIState.tab = 'order';
+      }
+
+      appEl.innerHTML = `
+        <!-- Header Utama Navigasi -->
+        <header class="bg-card-dark rounded-2xl p-4 gold-border mb-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-4">
+          
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/40 flex items-center justify-center text-gold-400">
+              <i class="fa-solid fa-mug-hot text-xl"></i>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold font-serif-gold tracking-widest leading-none">TITIK0</h1>
+              <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Aplikasi Kasir & Manajemen</span>
+            </div>
+          </div>
+
+          <!-- Navigasi Tab -->
+          <nav class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0">
+            ${navItems.map(([key, label, icon]) => `
+              <button onclick="UIState.tab='${key}'; renderApp();" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${UIState.tab === key ? 'bg-gold-500 text-black shadow-lg shadow-gold-500/20' : 'bg-obsidian-900 text-zinc-400 hover:text-gold-300 border border-gold-500/10'}">
+                <i class="fa-solid ${icon}"></i>
+                <span>${label}</span>
+              </button>
+            `).join('')}
+          </nav>
+
+          <!-- Informasi Pengguna & Keluar -->
+          <div class="flex items-center gap-3 border-t md:border-t-0 border-zinc-800 pt-2 md:pt-0 w-full md:w-auto justify-between">
+            <div class="text-right">
+              <div class="text-xs font-bold text-white">${escapeHtml(UIState.currentUser.name)}</div>
+              <div class="text-[10px] text-gold-400 capitalize font-medium">${UIState.currentUser.role}</div>
+            </div>
+            <button onclick="logout()" class="p-2 rounded-xl bg-obsidian-900 border border-gold-500/20 text-rose-400 hover:text-rose-300 text-xs hover:border-rose-500/30">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- Konten Utama Diterjemahkan -->
+        <main class="flex-1">
+          ${{
+            order: renderOrderView,
+            rekap: renderRekapView,
+            stok: renderStockView,
+            menu: renderMenuView,
+            user: renderUserView
+          }[UIState.tab]()}
+        </main>
+      `;
+    }
+
+    // Jalankan aplikasi saat halaman dimuat
+    (async function startApp() {
+      try {
+        await ensureDefaultAdmin();
+      } catch (e) {
+        console.error('Gagal menyiapkan admin default:', e);
+      }
+      renderApp();
+    })();
+  </script>
+</body>
+</html>

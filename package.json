@@ -1,0 +1,17 @@
+{
+  "name": "titik0-kasir",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "css": "tailwindcss -i ./input.css -o ./www/tailwind.css --minify" },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@fontsource/playfair-display": "^5.0.0",
+    "@fontsource/plus-jakarta-sans": "^5.0.0",
+    "tailwindcss": "3.4.17"
+  }
+}
